@@ -6,6 +6,7 @@ authors = ["Evan <ecurtin2@illinois.edu>"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
+jinja2 = "^2.10"
 
 [tool.poetry.dev-dependencies]
 pytest = "^3.0"
