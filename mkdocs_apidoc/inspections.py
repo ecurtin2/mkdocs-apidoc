@@ -75,10 +75,14 @@ def get_method_sigs(methods, cls) -> List[str]:
         name = x[0]
         doc = getdoc(x[1])
         try:
-            sig = formatted_signature(x[1], fname=f"{cls.__name__}.{name}")
+            try:
+                c = cls.__name__
+            except AttributeError:
+                c = cls
+            sig = formatted_signature(x[1], fname=f"{c}.{name}")
         except TypeError:
             sig = ""
-        escaped_name = name.replace("_", "\_")
+        escaped_name = name.replace("_", r"\_")
         sigs.append(f"#####{escaped_name}\n{sig}\n\n{doc or ''}")
     return sigs
 
