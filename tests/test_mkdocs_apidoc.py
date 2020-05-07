@@ -1,8 +1,8 @@
+from pathlib import Path
+
 from mkdocs_apidoc import __version__
 from mkdocs_apidoc.auto import auto_object, render_page
 from mkdocs_apidoc.collect import set_root
-
-from pathlib import Path
 
 set_root(Path(__file__).parent)
 

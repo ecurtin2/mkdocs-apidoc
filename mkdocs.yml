@@ -1,0 +1,7 @@
+site_name: MkLorum
+nav:
+    - Home: index.md
+    - Auto: auto.md
+
+plugins:
+  - mkdocs_apidoc

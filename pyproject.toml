@@ -1,17 +1,23 @@
 [tool.poetry]
 name = "mkdocs-apidoc"
-version = "0.1.0"
+version = "0.1.2"
 description = ""
-authors = ["Evan <ecurtin2@illinois.edu>"]
+authors = ["Evan <evanmcurtin@gmail.com>"]
+
+[tool.poetry.plugins."mkdocs.plugins"]
+mkdocs_apidoc = "mkdocs_apidoc.plugin:ApiDocPlugin"
 
 [tool.poetry.dependencies]
 python = "^3.7"
 jinja2 = "^2.10"
+mkdocs = "^1.1"
+numpydoc = "^0.9.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^3.0"
 flake8 = "^3.7"
-
+black = {version = "^18.3-alpha.0", allows-prereleases = true}
+isort = "^4.3"
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
