@@ -39,8 +39,10 @@ def formatted_signature(f: Callable, fname: str = None) -> str:
     else:
         if sig.return_annotation is Signature.empty:
             ret = ")"
-        else:
+        elif hasattr(sig.return_annotation, "__name__"):
             ret = f") -> {sig.return_annotation.__name__}"
+        else:
+            ret = f") -> {sig.return_annotation}"
     param_s = ", ".join(params) + ret
     if len(param_s) > 60:
         param_s = "\n    " + ",\n    ".join(params) + "\n" + ret
