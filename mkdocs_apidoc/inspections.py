@@ -10,6 +10,8 @@ except ImportError:
 
 
 def markdown_table(d: Dict[str, List[Any]], width: int = 10, none: str = "-") -> str:
+    print(d)
+
     def cstr(x):
         if x is not None:
             return str(x).center(width)
@@ -55,11 +57,14 @@ def formatted_signature(f: Callable, fname: str = None) -> str:
 
 
 def attrs_docs_from_module(m) -> str:
-    attrs_classes = [
-        v
-        for k, v in m.__dict__.items()
-        if attr.has(v) and k in m.__all__ and isinstance(v, type)
-    ]
+    attrs_class_dict = {
+        k: v for k, v in m.__dict__.items() if attr.has(v) and isinstance(v, type)
+    }
+    if hasattr(m, "__all__"):
+        attrs_classes = [v for k, v in attrs_class_dict.items() if k in m.__all__]
+    else:
+        attrs_classes = list(attrs_class_dict.values())
+
     docs = [getdoc(cls) for cls in attrs_classes]
     sigs = [formatted_signature(cls) for cls in attrs_classes]
     headers = [f"###{cls.__name__}\n\n" for cls in attrs_classes]
