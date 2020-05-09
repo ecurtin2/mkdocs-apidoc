@@ -7,10 +7,6 @@ from mkdocs_apidoc.collect import set_root
 set_root(Path(__file__).parent)
 
 
-def test_version():
-    assert __version__ == "0.1.0"
-
-
 def test_auto_object():
     s = auto_object("example_module.example_function")
     print(s)
