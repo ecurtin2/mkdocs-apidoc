@@ -1,6 +1,5 @@
 from pathlib import Path
 
-from mkdocs_apidoc import __version__
 from mkdocs_apidoc.auto import auto_object, render_page
 from mkdocs_apidoc.collect import set_root
 
