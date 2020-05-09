@@ -4,7 +4,7 @@ signature_template = """
 
 function_template = """
 
-### FUNCTION= {{ name }}
+### {{ name }}
 
 {{ signature }}
 
@@ -15,7 +15,7 @@ function_template = """
 
 method_template = """
 
-##### METHOD={{ name }}
+##### {{ name }}
 
 {{ signature }}
 

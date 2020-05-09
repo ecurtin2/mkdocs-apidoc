@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 import inspect
 from jinja2 import Template
-from typing import Callable, List
+from typing import Callable, List, Optional
 from mkdocs_apidoc import config
 
 import logging
@@ -40,13 +40,15 @@ class Signature:
         if fname is None:
             fname = f.__name__
 
-        return Signature(name=fname, params=params, returnval=ret)
+        sig = Signature(name=fname, params=params, returnval=ret)
+        logger.debug(f"Register signature: {sig}")
+        return sig
 
     def __repr_markdown__(self) -> str:
         tmpl = Template(config.signature_template)
         escaped_name = self.name.replace("_", r"\_")
         return tmpl.render(
-            name=escaped_name, signature=self.params, returnval=self.returnval
+            name=escaped_name, params=self.params, returnval=self.returnval
         )
 
 
@@ -59,9 +61,11 @@ class Function:
     @staticmethod
     def from_callable(func) -> "Function":
         doc = inspect.getdoc(func)
-        return Function(
+        f = Function(
             name=func.__name__, signature=Signature.from_callable(func), docstring=doc
         )
+        logger.debug(f"Registered function {f}")
+        return f
 
     def __repr_markdown__(self) -> str:
         tmpl = Template(config.function_template)
@@ -72,12 +76,24 @@ class Function:
         )
 
 
-class Method(Function):
-    """"Separate the method template from free function template"""
+@dataclass
+class Method:
+    name: str
+    signature: Signature
+    docstring: str
+
+    @staticmethod
+    def from_callable(func, fname: Optional[str] = None) -> "Method":
+        doc = inspect.getdoc(func)
+
+        if fname is None:
+            name = func.__name__
+        else:
+            name = fname
+        return Method(name=name, signature=Signature.from_callable(func), docstring=doc)
 
     def __repr_markdown__(self) -> str:
         tmpl = Template(config.method_template)
-        print("RENDERING A METHOD")
         return tmpl.render(
             name=self.name,
             signature=self.signature.__repr_markdown__(),
@@ -135,7 +151,10 @@ class Class:
             name=cls.__name__,
             docstring=inspect.getdoc(cls),
             # methods=[m[1] for m in methods],/
-            dunder_methods=[Method.from_callable(m) for m in dunder_methods],
+            dunder_methods=[
+                Method.from_callable(m, fname=f"{m.__name__}".replace("_", r"\_"))
+                for m in dunder_methods
+            ],
             staticmethods=[Method.from_callable(m) for m in staticmethods],
             classmethods=[Method.from_callable(m) for m in classmethods],
             normal_methods=[Method.from_callable(m) for m in normal_methods],
@@ -163,7 +182,6 @@ class Class:
         for a in attrs:
             methods = getattr(self, a)
             formatted_methods = [m.__repr_markdown__() for m in methods]
-            print(formatted_methods)
             sigs[a] = formatted_methods
 
         return tmpl.render(name=self.name, docstring=self.docstring, **sigs)
@@ -181,9 +199,9 @@ class Module:
         module_docstring = inspect.getdoc(m)
         module_name = m.__name__.split(".")[-1]
 
-        funcs = [v for k, v in m.__dict__.items() if inspect.isfunction(v)]
+        funcs = {name: f for name, f in m.__dict__.items() if inspect.isfunction(f)}
         if hasattr(m, "__all__"):
-            funcs = [f for f in funcs if f in m.__all__]
+            funcs = [f for name, f in funcs.items() if name in m.__all__]
 
         class_dict = {k: v for k, v in m.__dict__.items() if isinstance(v, type)}
         if hasattr(m, "__all__"):
