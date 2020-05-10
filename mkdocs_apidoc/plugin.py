@@ -9,7 +9,7 @@ from mkdocs_apidoc import config
 class ApiDocPlugin(BasePlugin):
     config_scheme = (
         ("function_template", Type(str, default=config.function_template)),
-        ("method_template", Type(int, default=config.method_template)),
+        ("method_template", Type(str, default=config.method_template)),
         ("signature_template", Type(str, default=config.signature_template)),
         ("module_template", Type(str, default=config.module_template)),
         ("class_template", Type(str, default=config.class_template)),
