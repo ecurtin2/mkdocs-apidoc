@@ -10,9 +10,9 @@ class ApiDocPlugin(BasePlugin):
     config_scheme = (
         ("function_template", Type(str, default=config.function_template)),
         ("method_template", Type(int, default=config.method_template)),
-        ("signature_template", Type(bool, default=config.signature_template)),
-        ("module_template", Type(bool, default=config.module_template)),
-        ("class_template", Type(bool, default=config.class_template)),
+        ("signature_template", Type(str, default=config.signature_template)),
+        ("module_template", Type(str, default=config.module_template)),
+        ("class_template", Type(str, default=config.class_template)),
     )
 
     def on_config(self, conf):
