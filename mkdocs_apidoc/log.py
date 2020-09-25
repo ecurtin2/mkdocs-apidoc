@@ -6,7 +6,7 @@ logging.basicConfig(
     format="[%(name)s] %(asctime)s [%(levelname)s]: %(message)s",
     datefmt="%H:%M:%S",
 )
-log_level = getenv("MKDOCS_APIDOC_LOG_LEVEL", "WARN")
+log_level = getenv("MKDOCS_APIDOC_LOG_LEVEL", "DEBUG")
 
 logger = logging.getLogger("mkdocs-apidoc")
 logger.setLevel(log_level)

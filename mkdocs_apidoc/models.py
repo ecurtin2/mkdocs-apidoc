@@ -9,10 +9,13 @@ import logging
 logger = logging.getLogger("mkdocs-apidoc")
 
 
+__all__ = ["Signature", "Function", "Method", "Class", "Module"]
+
+
 @dataclass
 class Signature:
     name: str
-    params: list
+    params: List
     returnval: str
 
     @staticmethod
@@ -61,14 +64,19 @@ class Function:
     @staticmethod
     def from_callable(func) -> "Function":
         doc = inspect.getdoc(func)
+        if hasattr(func, "__name__"):
+            name = func.__name__
+        else:
+            name = str(func)
         f = Function(
-            name=func.__name__, signature=Signature.from_callable(func), docstring=doc
+            name=name, signature=Signature.from_callable(func), docstring=doc
         )
         logger.debug(f"Registered function {f}")
         return f
 
     def __repr_markdown__(self) -> str:
         tmpl = Template(config.function_template)
+        logger.debug(f"Rendering {self}")
         return tmpl.render(
             name=self.name,
             signature=self.signature.__repr_markdown__(),
@@ -202,6 +210,8 @@ class Module:
         funcs = {name: f for name, f in m.__dict__.items() if inspect.isfunction(f)}
         if hasattr(m, "__all__"):
             funcs = [f for name, f in funcs.items() if name in m.__all__]
+        else:
+            logger.warning(f"Module {module_name} does not define __all__. You probably want do to that.")
 
         class_dict = {k: v for k, v in m.__dict__.items() if isinstance(v, type)}
         if hasattr(m, "__all__"):
@@ -209,10 +219,20 @@ class Module:
         else:
             classes = list(class_dict.values())
 
+        def falsey_if_exception(f):
+            def wrapped(*args, **kwargs):
+                try:
+                    return f(*args, **kwargs)
+                except Exception as e:
+                    logger.exception(e)
+                    return False
+            return wrapped
+
+        make_func = falsey_if_exception(Function.from_callable)
         return Module(
             name=module_name,
-            docstring=module_docstring,
-            functions=[Function.from_callable(f) for f in funcs],
+            docstring=module_docstring or "",
+            functions=[y for f in funcs if (y := make_func(f))],
             classes=[Class.from_class(c) for c in classes],
         )
 
@@ -223,4 +243,22 @@ class Module:
             docstring=self.docstring,
             classes=[c.__repr_markdown__() for c in self.classes],
             functions=[f.__repr_markdown__() for f in self.functions],
+        )
+
+
+@dataclass
+class DataClass:
+    name: str
+    fields: list
+
+    @staticmethod
+    def from_class(cls) -> "DataClass":
+        from dataclasses import fields
+        return DataClass(name=cls.__name__, fields=fields(cls))
+
+    def __repr_markdown__(self) -> str:
+        tmpl = Template(config.dataclass_template)
+        return tmpl.render(
+            name=self.name,
+            fields=self.fields
         )

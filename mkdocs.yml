@@ -1,7 +1,12 @@
-site_name: MkLorum
+site_name: mkdocs-apidoc
 nav:
     - Home: index.md
-    - Auto: auto.md
+    - auto: auto.md
+    - models: models.md
+    - customize: config.md
+
+theme:
+  name: material
 
 plugins:
   - mkdocs_apidoc

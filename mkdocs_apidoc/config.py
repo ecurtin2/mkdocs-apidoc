@@ -1,12 +1,12 @@
-signature_template = """
-({% for p in params %}{{p}}, {% endfor %}) -> {{ returnval }}
-"""
+signature_template = """({{params|join(', ')}}){% if returnval %} -> {{ returnval }}{% endif %}"""
 
 function_template = """
 
 ### {{ name }}
 
-{{ signature }}
+```python
+def {{name}}{{ signature }}:
+```
 
 {{ docstring }}
 
@@ -88,4 +88,13 @@ module_template = """
 {% endfor %}
 {% endif %}
 
+"""
+
+dataclass_template = """
+
+{{name}}
+
+{% for f in fields %}
+- {{f.name}} [{{f.type}}]
+{% endfor %}
 """
