@@ -16,7 +16,7 @@ jobs:
     - uses: dschep/install-poetry-action@v1.2
     - name: Install dependencies
       run: poetry install
-    - name: Lint with flake8
-      run: "poetry run flake8 ."
+#    - name: Lint with flake8
+#      run: "poetry run flake8 ."
     - name: Test with pytest
       run: "poetry run pytest tests\ "
