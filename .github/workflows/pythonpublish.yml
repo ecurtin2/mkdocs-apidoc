@@ -31,6 +31,7 @@ jobs:
       - uses: dschep/install-poetry-action@v1.2
       - name: Install and Build
         run: |
+          poetry install
           poetry run mkdocs build
 
       - name: Deploy 🚀
