@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mkdocs-apidoc"
-version = "0.1.7"
+version = "0.1.8"
 description = ""
 authors = ["Evan <evanmcurtin@gmail.com>"]
 
