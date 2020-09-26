@@ -3,10 +3,21 @@ nav:
     - Home: index.md
     - auto: auto.md
     - models: models.md
-    - customize: config.md
+    - config: config.md
+
+markdown_extensions:
+  - def_list:
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+  - pymdownx.superfences:
 
 theme:
   name: material
+extra_css:
+  - stylesheets/extra.css
 
 plugins:
-  - mkdocs_apidoc
+  - mkdocs_apidoc:
+      log_level: WARN
+      execute_and_insert_examples: true

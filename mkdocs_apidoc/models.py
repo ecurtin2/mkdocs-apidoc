@@ -1,10 +1,13 @@
-from dataclasses import dataclass, field
 import inspect
-from jinja2 import Template
-from typing import Callable, List, Optional
-from mkdocs_apidoc import config
-
 import logging
+from dataclasses import dataclass, field, fields
+
+from typing import Callable, List, Optional
+
+from jinja2 import Template
+
+from mkdocs_apidoc import config
+from mkdocs_apidoc.parser import docstring_with_code_outputs
 
 logger = logging.getLogger("mkdocs-apidoc")
 
@@ -15,7 +18,7 @@ __all__ = ["Signature", "Function", "Method", "Class", "Module"]
 @dataclass
 class Signature:
     name: str
-    params: List
+    params: List[str]
     returnval: str
 
     @staticmethod
@@ -50,6 +53,7 @@ class Signature:
     def __repr_markdown__(self) -> str:
         tmpl = Template(config.signature_template)
         escaped_name = self.name.replace("_", r"\_")
+
         return tmpl.render(
             name=escaped_name, params=self.params, returnval=self.returnval
         )
@@ -68,19 +72,22 @@ class Function:
             name = func.__name__
         else:
             name = str(func)
-        f = Function(
-            name=name, signature=Signature.from_callable(func), docstring=doc
-        )
+        f = Function(name=name, signature=Signature.from_callable(func), docstring=doc)
         logger.debug(f"Registered function {f}")
         return f
 
     def __repr_markdown__(self) -> str:
         tmpl = Template(config.function_template)
         logger.debug(f"Rendering {self}")
+        if config.execute_and_insert_examples:
+            logger.debug(f"Executing code blocks in {self}")
+            ds = docstring_with_code_outputs(self.docstring)
+        else:
+            ds = self.docstring
         return tmpl.render(
             name=self.name,
             signature=self.signature.__repr_markdown__(),
-            docstring=self.docstring,
+            docstring=ds,
         )
 
 
@@ -211,7 +218,9 @@ class Module:
         if hasattr(m, "__all__"):
             funcs = [f for name, f in funcs.items() if name in m.__all__]
         else:
-            logger.warning(f"Module {module_name} does not define __all__. You probably want do to that.")
+            logger.warning(
+                f"Module {module_name} does not define __all__. You probably want do to that."
+            )
 
         class_dict = {k: v for k, v in m.__dict__.items() if isinstance(v, type)}
         if hasattr(m, "__all__"):
@@ -226,6 +235,7 @@ class Module:
                 except Exception as e:
                     logger.exception(e)
                     return False
+
             return wrapped
 
         make_func = falsey_if_exception(Function.from_callable)
@@ -247,18 +257,31 @@ class Module:
 
 
 @dataclass
+class Field:
+    name: str
+    type: str
+
+    @staticmethod
+    def from_dataclass_field(f):
+        try:
+            t = f.type.__name__
+        except AttributeError:
+            t = str(f.type)
+        return Field(f.name, t.replace("typing.", ""))
+
+
+@dataclass
 class DataClass:
     name: str
     fields: list
 
     @staticmethod
     def from_class(cls) -> "DataClass":
-        from dataclasses import fields
-        return DataClass(name=cls.__name__, fields=fields(cls))
+        return DataClass(
+            name=cls.__name__,
+            fields=[Field.from_dataclass_field(f) for f in fields(cls)],
+        )
 
     def __repr_markdown__(self) -> str:
         tmpl = Template(config.dataclass_template)
-        return tmpl.render(
-            name=self.name,
-            fields=self.fields
-        )
+        return tmpl.render(name=self.name, fields=self.fields)

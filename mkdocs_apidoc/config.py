@@ -1,4 +1,36 @@
-signature_template = """({{params|join(', ')}}){% if returnval %} -> {{ returnval }}{% endif %}"""
+import logging
+from os import getenv
+
+
+__all__ = [
+    "logger",
+    "signature_template",
+    "execute_and_insert_examples",
+    "function_template",
+    "method_template",
+    "class_template",
+    "module_template",
+    "dataclass_template",
+]
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="[%(name)s] %(asctime)s [%(levelname)s]: %(message)s",
+    datefmt="%H:%M:%S",
+)
+log_level = getenv("MKDOCS_APIDOC_LOG_LEVEL", "INFO")
+
+logger = logging.getLogger("mkdocs-apidoc")
+logger.setLevel(log_level)
+
+logger.debug("Set log level")
+
+
+signature_template = (
+    """({{params|join(', ')}}){% if returnval %} -> {{ returnval }}{% endif %}"""
+)
+
+execute_and_insert_examples = False
 
 function_template = """
 
@@ -92,9 +124,9 @@ module_template = """
 
 dataclass_template = """
 
-{{name}}
+#### {{name}}
 
 {% for f in fields %}
-- {{f.name}} [{{f.type}}]
+- {{f.name}}: {{f.type}}
 {% endfor %}
 """

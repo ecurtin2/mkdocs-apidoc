@@ -4,17 +4,58 @@ individual functions, objects, and classes is supported, as well
 as modules.
 
 """
-
+import sys
+from importlib import import_module
+from pathlib import Path
 from typing import Callable
 
 from jinja2 import Template
 
-from mkdocs_apidoc.collect import obj_from_string
-from mkdocs_apidoc.docstring import doc_from_obj
-from mkdocs_apidoc.models import Module, DataClass
+from mkdocs_apidoc.models import DataClass, Module
+
+__all__ = [
+    "auto_dataclass",
+    "auto_object",
+    "auto_module",
+    "markdown",
+    "register_template_function",
+    "render_page",
+    "obj_from_string",
+    "set_root",
+    "plustwo",
+]
 
 
-__all__ = ["register_template_function", "auto_object", "auto_module", "markdown", "render_page"]
+SOURCE_ROOT = Path()
+
+
+def set_root(path: Path):
+    """Set the root directory for imported modules
+
+    The path will be added to the pythonpath so that modules
+    can be imported. This is mostly used for testing.
+    """
+    global SOURCE_ROOT
+    if not path.is_dir():
+        raise ValueError(f"Project root must be directory, got {path}")
+
+    SOURCE_ROOT = path
+    sys.path.append(str(SOURCE_ROOT.absolute()))
+
+
+def obj_from_string(s: str) -> object:
+    """Given a string for an object, return the actual object
+
+    ```
+    f = obj_from_string('mymodule.myfunc')
+    ```
+    """
+    mod_name, *rest = s.split(".")
+    mod = import_module(mod_name)
+    current = mod
+    for attr in rest:
+        current = getattr(current, attr)
+    return current
 
 
 def register_template_function(t: Template, f: Callable):
@@ -24,15 +65,18 @@ def register_template_function(t: Template, f: Callable):
     - f: A callable which wil be registered for use in the template.
         The name of the template-function will be the `__name__` attribute.
 
+
+    ### Examples
+
     ```python
     from jinja2 import Template
-    from mkdocs_apidoc.auto import auto_object, auto_module, markdown
+    from mkdocs_apidoc.auto import markdown, register_template_function
 
     t = Template("here is some {{text}}")
-    register_template_function(t, auto_object)
-    register_template_function(t, auto_module)
     register_template_function(t, markdown)
     ```
+
+
     """
     t.globals[f.__name__] = f
 
@@ -46,23 +90,15 @@ def auto_object(s: str) -> str:
 
     - s: The name of an object, fully qualified.
 
-    ```python
-    >>> docs = auto_object("mkdocs_apidoc.auto.auto_object")
-    >>> print(docs)
-
-    ## auto_object
-
 
     Automatically create a string from an object's name
 
     This will take the fully qualified name of the object from the project
-    ...
-    ```
     """
     obj = obj_from_string(s)
     if isinstance(obj, str):
         return obj
-    return doc_from_obj(obj)
+    return obj.__doc__
 
 
 def auto_module(s: str) -> str:
@@ -74,11 +110,6 @@ def auto_module(s: str) -> str:
     {{ auto_module("mkdocs_apidoc.auto") }}
     ```
 
-    Python usage:
-    ```python
-    >>> auto_module("mkdocs_apidoc.auto")
-    ```
-
     """
     obj = obj_from_string(s)
     return Module.from_module(obj).__repr_markdown__()
@@ -87,22 +118,19 @@ def auto_module(s: str) -> str:
 def markdown(s: str) -> str:
     """Get the markdown representation of the object represented by the string.
 
-    Template usage:
+    #### Parameters
+    s
+    : The name of an object, which may be namespaced, i.e `"itertools.islice"`
+
+    #### Returns
+    :    The loaded objects's `__repr_markdown__`
+
+    #### Template usage
     ```
-    ## my_mkdocs_file.md
+    # my_mkdocs_file.md
     {{ markdown("mypackage.mymodule.my_object") }}
     ```
 
-    Python usage:
-    ```python
-    >>> class A:
-    >>>    def __repr_markdown__(self):
-    >>>        return "# hi I'm markdown"
-    >>>
-    >>>my_object = A()
-    >>> markdown("mymodule.my_object")
-    "# hi I'm markdown"
-    ```
     """
     obj = obj_from_string(s)
     try:
@@ -114,6 +142,7 @@ def markdown(s: str) -> str:
 
 
 def auto_dataclass(dataclass: str) -> str:
+    """Generate the markdown for a dataclass, showing the fields."""
     cls = obj_from_string(dataclass)
     return DataClass.from_class(cls).__repr_markdown__()
 
@@ -121,7 +150,12 @@ def auto_dataclass(dataclass: str) -> str:
 def render_page(page: str) -> str:
     """render the page
 
-    - page: The page to render as a template.
+    **page**
+    :   The page to be rendered
+
+
+    **returns**
+    :   The rendered page
 
     """
     t = Template(page)
@@ -130,3 +164,33 @@ def render_page(page: str) -> str:
     register_template_function(t, markdown)
     register_template_function(t, auto_dataclass)
     return t.render()
+
+
+def plustwo(x: int) -> int:
+    """Add two to x
+
+    #### Parameters
+    x
+    : a thing
+
+    #### Returns
+    :    x plus 2
+
+    #### Examples
+
+    You can run it on positive numbers
+
+    ```python
+    from mkdocs_apidoc.auto import plustwo
+    print(plustwo(5))
+    ```
+
+    It works on negative numbers, too!
+
+    ```python
+    from mkdocs_apidoc.auto import plustwo
+    print(plustwo(-10))
+    ```
+
+    """
+    return x + 2
