@@ -5,26 +5,11 @@
 A plugin for mkdocs to automatically generate api documentation
 for a python library. 
 
-## Contents
+## Example website
 
-[Installation](#installation)
+The project documentation is made using itself!
 
-[Usage](#usage)
-
-[Customization](#customization)
-
-[Template Configuration](#template-configuration)
-
-- [signature-template](#signature_template)
-- [function-template](#function_template)
-- [method-template](#method_template)
-- [class-template](#class_template)
-- [module-template](#module_template)
-
-## Installation
-
-`pip install mkdocs-apidoc`
-
+https://ecurtin2.github.io/mkdocs-apidoc/
 
 ## Usage
 
@@ -52,3 +37,8 @@ And that's it! The module docstring and docstrings for classes, methods
 and functions are automatically rendered in your site documentation. We've
 provided some default formatting for how the various components get rendered to markdown, 
 but these can be customized using a jinja2 template in the config. 
+
+
+## Installation
+
+`pip install mkdocs-apidoc`
