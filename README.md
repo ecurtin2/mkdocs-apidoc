@@ -1,7 +1,5 @@
 # mkdocs-apidoc
 
----
-
 A plugin for mkdocs to automatically generate api documentation
 for a python library. 
 
