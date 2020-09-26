@@ -6,7 +6,7 @@ set_root(Path(__file__).parent)
 
 
 def test_auto_object():
-    s = auto_object("example_module.example_function")
+    s = auto_object("mkdocs_apidoc.example_module.example_function")
     print(s)
 
 

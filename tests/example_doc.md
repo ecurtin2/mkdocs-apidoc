@@ -1,3 +1,3 @@
 # Here is some markdown
 
-{{ auto_object("example_module.example_function") }}
+{{ auto_object("mkdocs_apidoc.example_module.example_function") }}
