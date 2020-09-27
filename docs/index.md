@@ -1,5 +1,7 @@
 # Mkdocs-Apidoc
 
+### Version: {{ auto_object("mkdocs_apidoc.__version__") }}
+
 ## Installation
 
 `pip install mkdocs-apidoc`
@@ -36,7 +38,6 @@ And that's it! The module docstring and docstrings for classes, methods
 and functions are automatically rendered in your site documentation. We've
 provided some default formatting for how the various components get rendered to markdown, 
 but these can be customized using a jinja2 template in the config. 
-
 
 ## auto_object
 

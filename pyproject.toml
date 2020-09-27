@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mkdocs-apidoc"
-version = "0.2.0"
+version = "0.2.1"
 description = ""
 authors = ["Evan <evanmcurtin@gmail.com>"]
 
@@ -8,7 +8,7 @@ authors = ["Evan <evanmcurtin@gmail.com>"]
 mkdocs_apidoc = "mkdocs_apidoc.plugin:ApiDocPlugin"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 jinja2 = "^2.10"
 mkdocs = "^1.1"
 numpydoc = "^0.9.2"
