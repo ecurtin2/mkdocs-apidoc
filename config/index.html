@@ -136,8 +136,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../auto/" title="auto" class="md-nav__link">
-      auto
+    <a href="../render/" title="render" class="md-nav__link">
+      render
     </a>
   </li>
 
@@ -193,6 +193,13 @@
   
     <nav class="md-nav" aria-label="Default configuration">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#options" class="md-nav__link">
+    Options
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#function_template" class="md-nav__link">
@@ -271,6 +278,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#options" class="md-nav__link">
+    Options
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function_template" class="md-nav__link">
     function_template
   </a>
@@ -347,6 +361,45 @@
 <p>All functions will then be rendered via this jinja2 template instead of the provided 
 default. The available arguments can be seen in <code>models</code></p>
 <h2 id="default-configuration">Default configuration<a class="headerlink" href="#default-configuration" title="Permanent link">&para;</a></h2>
+<h4 id="options">Options<a class="headerlink" href="#options" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>function_template</td>
+<td>str</td>
+</tr>
+<tr>
+<td>method_template</td>
+<td>str</td>
+</tr>
+<tr>
+<td>signature_template</td>
+<td>str</td>
+</tr>
+<tr>
+<td>module_template</td>
+<td>str</td>
+</tr>
+<tr>
+<td>class_template</td>
+<td>str</td>
+</tr>
+<tr>
+<td>log_level</td>
+<td>str</td>
+</tr>
+<tr>
+<td>execute_and_insert_examples</td>
+<td>bool</td>
+</tr>
+</tbody>
+</table>
 <h4 id="function_template">function_template<a class="headerlink" href="#function_template" title="Permanent link">&para;</a></h4>
 <div class="highlight"><pre><span></span><code>### {{ name }}
 
@@ -362,9 +415,13 @@ def {{name}}{{ signature }}:
 </code></pre></div>
 
 <h4 id="method_template">method_template<a class="headerlink" href="#method_template" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code>##### {{ name }}
+<div class="highlight"><pre><span></span><code>#### {{ name }}
 
-{{ signature }}
+```python
+{% if type == &quot;STATIC&quot; %}@staticmethod{% endif %}{% if type == &quot;CLASS&quot; %}@classmethod{% endif %}{% if type == &quot;PROPERTY&quot; %}@property{% endif %}{% if type == &quot;ABSTRACTPROPERTY&quot; %}@staticmethod
+@property{% endif %}
+def {{name}}{{ signature }}:
+```
 
 {{ docstring }}
 </code></pre></div>
@@ -374,38 +431,17 @@ def {{name}}{{ signature }}:
 
 {{ docstring }}
 
------------------
-
-{% if normal_methods %}
-#### Methods
-
-{% for m in normal_methods %}
-{{m}}
+{% if class_fields %}
+#### Fields 
+| Name | Type |
+|------|------|
+{% for field in class_fields %}| {{ field.name }} | {{ field.type }} |
 {% endfor %}
 {% endif %}
 
-{% if staticmethods %}
-#### Staticmethods
-
-{% for m in staticmethods %}
-{{m}}
+{% for m in methods %}
+{{ m }}
 {% endfor %}
-{% endif %}
-
-{% if classmethods %}
-#### ClassMethods
-{% for m in classmethods %}
-{{m}}
-{% endfor %}
-{% endif %}
-
-{% if dunder_methods %}
-#### Dunder Methods
-
-{% for m in dunder_methods %}
-{{m}}
-{% endfor %}
-{% endif %}
 </code></pre></div>
 
 <h4 id="module_template">module_template<a class="headerlink" href="#module_template" title="Permanent link">&para;</a></h4>
@@ -413,12 +449,22 @@ def {{name}}{{ signature }}:
 
 {{ docstring }}
 
+{% if enums %}
+## Enums
+------------
+{% for enum in enums %}
+{{ enum }}
+---------------------------
+{% endfor %}
+{% endif %}
+
 {% if classes %}
 ## Classes
 -----------
 
 {% for c in classes %}
 {{ c }}
+---------------------------
 {% endfor %}
 {% endif %}
 
@@ -428,6 +474,7 @@ def {{name}}{{ signature }}:
 
 {% for f in functions %}
 {{ f }}
+---------------------------
 {% endfor %}
 {% endif %}
 </code></pre></div>
