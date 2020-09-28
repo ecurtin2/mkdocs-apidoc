@@ -24,7 +24,8 @@ minversion = "6.0"
 addopts = "-v"
 testpaths = [
     "tests"
-][build-system]
+]
+[build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
 

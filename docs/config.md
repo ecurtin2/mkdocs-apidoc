@@ -5,7 +5,7 @@ Templates can be customized my modifying the config
 ```yaml
 site_name: MkLorum
 nav:
-    - Home: README.md
+    - Home: index.md
     - Auto: my_module.md
 
 plugins:
