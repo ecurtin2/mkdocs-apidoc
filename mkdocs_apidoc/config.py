@@ -1,7 +1,6 @@
 import logging
 from os import getenv
 
-
 __all__ = [
     "logger",
     "signature_template",
@@ -47,9 +46,13 @@ def {{name}}{{ signature }}:
 
 method_template = """
 
-##### {{ name }}
+#### {{ name }}
 
-{{ signature }}
+```python
+{% if type == "STATIC" %}@staticmethod{% endif %}{% if type == "CLASS" %}@classmethod{% endif %}{% if type == "PROPERTY" %}@property{% endif %}{% if type == "ABSTRACTPROPERTY" %}@staticmethod
+@property{% endif %}
+def {{name}}{{ signature }}:
+```
 
 {{ docstring }}
 
@@ -61,38 +64,18 @@ class_template = """
 
 {{ docstring }}
 
------------------
-
-{% if normal_methods %}
-#### Methods
-
-{% for m in normal_methods %}
-{{m}}
+{% if class_fields %}
+#### Fields 
+| Name | Type |
+|------|------|
+{% for field in class_fields %}| {{ field.name }} | {{ field.type }} |
 {% endfor %}
 {% endif %}
 
-{% if staticmethods %}
-#### Staticmethods
-
-{% for m in staticmethods %}
-{{m}}
+{% for m in methods %}
+{{ m }}
 {% endfor %}
-{% endif %}
 
-{% if classmethods %}
-#### ClassMethods
-{% for m in classmethods %}
-{{m}}
-{% endfor %}
-{% endif %}
-
-{% if dunder_methods %}
-#### Dunder Methods
-
-{% for m in dunder_methods %}
-{{m}}
-{% endfor %}
-{% endif %}
 """
 
 
@@ -102,12 +85,22 @@ module_template = """
 
 {{ docstring }}
 
+{% if enums %}
+## Enums
+------------
+{% for enum in enums %}
+{{ enum }}
+---------------------------
+{% endfor %}
+{% endif %}
+
 {% if classes %}
 ## Classes
 -----------
 
 {% for c in classes %}
 {{ c }}
+---------------------------
 {% endfor %}
 {% endif %}
 
@@ -117,16 +110,21 @@ module_template = """
 
 {% for f in functions %}
 {{ f }}
+---------------------------
 {% endfor %}
 {% endif %}
 
 """
 
-dataclass_template = """
+enum_template = """
 
-#### {{name}}
+### {{ name }}
 
-{% for f in fields %}
-- {{f.name}}: {{f.type}}
+{{ docstring }}
+
+| {{name}} |
+|-------|
+{% for level in levels %}| {{ level }} |
 {% endfor %}
+
 """

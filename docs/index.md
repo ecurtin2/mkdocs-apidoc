@@ -1,6 +1,6 @@
 # Mkdocs-Apidoc
 
-### Version: {{ auto_object("mkdocs_apidoc.__version__") }}
+### Version: {{ raw_object("mkdocs_apidoc.__version__") }}
 
 ## Installation
 

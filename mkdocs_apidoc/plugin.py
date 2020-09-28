@@ -1,11 +1,12 @@
+import tabulate
+from mkdocs.config.base import Config
 from mkdocs.config.config_options import Type
 from mkdocs.plugins import BasePlugin
 from mkdocs.structure.files import Files
 from mkdocs.structure.nav import Navigation
-from mkdocs.config.base import Config
 
 from mkdocs_apidoc import config
-from mkdocs_apidoc.auto import render_page
+from mkdocs_apidoc.render import render_page
 
 
 class ApiDocPlugin(BasePlugin):
@@ -36,4 +37,12 @@ class ApiDocPlugin(BasePlugin):
         return render_page(markdown)
 
     def on_nav(self, nav: Navigation, config: Config, files: Files) -> Navigation:
+        # TODO: I think adding links/references has to happen here
         return nav
+
+
+_schema_markdown = tabulate.tabulate(
+    [[name, t._type.__name__] for name, t in ApiDocPlugin.config_scheme],
+    headers=["Name", "type"],
+    tablefmt="github",
+)

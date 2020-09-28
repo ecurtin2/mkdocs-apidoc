@@ -1,1 +1,0 @@
-{{ auto_module("mkdocs_apidoc.auto") }}

@@ -1,7 +1,7 @@
 site_name: mkdocs-apidoc
 nav:
     - Home: index.md
-    - auto: auto.md
+    - render: render.md
     - models: models.md
     - config: config.md
 

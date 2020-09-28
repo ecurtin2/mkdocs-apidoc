@@ -25,27 +25,34 @@ default. The available arguments can be seen in `models`
 
 ## Default configuration
 
+#### Options
+
+{{ raw_object("mkdocs_apidoc.plugin._schema_markdown")}}
+
+
+
 #### function_template
 ````
-{{auto_object("mkdocs_apidoc.config.function_template")}}
+{{raw_object("mkdocs_apidoc.config.function_template")}}
 ````
 
 #### signature_template
-```
-{{auto_object("mkdocs_apidoc.config.signature_template")}}
-```
+````
+{{raw_object("mkdocs_apidoc.config.signature_template")}}
+````
 
 #### method_template
-```
-{{auto_object("mkdocs_apidoc.config.method_template")}}
-```
+````
+{{raw_object("mkdocs_apidoc.config.method_template")}}
+````
 
 #### class_template
-```
-{{auto_object("mkdocs_apidoc.config.class_template")}}
-```
+````
+{{raw_object("mkdocs_apidoc.config.class_template")}}
+````
 
 #### module_template
-```
-{{auto_object("mkdocs_apidoc.config.module_template")}}
-```
+````
+{{raw_object("mkdocs_apidoc.config.module_template")}}
+````
+

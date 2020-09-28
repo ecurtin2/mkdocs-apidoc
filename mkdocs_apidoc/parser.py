@@ -1,5 +1,6 @@
 import contextlib
 import sys
+from importlib import import_module
 from io import StringIO
 from textwrap import dedent
 from typing import List, Tuple
@@ -47,3 +48,18 @@ def docstring_with_code_outputs(text: str) -> str:
             output.append(block)
 
     return "".join(output)
+
+
+def obj_from_string(s: str) -> object:
+    """Given a string for an object, return the actual object
+
+    ```
+    f = obj_from_string('mymodule.myfunc')
+    ```
+    """
+    mod_name, *rest = s.split(".")
+    mod = import_module(mod_name)
+    current = mod
+    for attr in rest:
+        current = getattr(current, attr)
+    return current
