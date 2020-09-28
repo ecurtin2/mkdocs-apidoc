@@ -1,4 +1,6 @@
 site_name: mkdocs-apidoc
+repo_name: 'ecurtin2/mkdocs-apidoc'
+repo_url: 'https://github.com/ecurtin2/mkdocs-apidoc'
 nav:
     - Home: index.md
     - render: render.md
@@ -14,10 +16,29 @@ markdown_extensions:
 
 theme:
   name: material
+  language: 'en'
+  palette:
+    primary: 'teal'
+    accent: 'amber'
+  features:
+      - navigation.instant
+
 extra_css:
   - stylesheets/extra.css
+
+extra:
+  social:
+    - icon: 'fontawesome/brands/github-alt'
+      link: 'https://github.com/ecurtin2'
+    - icon: 'fontawesome/brands/linkedin'
+      link: 'https://www.linkedin.com/in/evanmcurtin'
+
 
 plugins:
   - mkdocs_apidoc:
       log_level: WARN
       execute_and_insert_examples: true
+  - search:
+      separator: '[\s\-\.]+'
+      lang:
+        - en
