@@ -1,9 +1,10 @@
 site_name: mkdocs-apidoc
 nav:
-    - Home: index.md
+    - Home: README.md
     - render: render.md
     - models: models.md
     - config: config.md
+    - License: LICENSE.md
 
 markdown_extensions:
   - def_list:

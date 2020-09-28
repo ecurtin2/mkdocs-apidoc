@@ -27,7 +27,7 @@ And in your `mkdocs.yaml`
 ```yaml
 site_name: MkLorum
 nav:
-    - Home: index.md
+    - Home: README.md
     - Auto: my_module.md
 
 plugins:

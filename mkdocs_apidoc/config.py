@@ -9,7 +9,6 @@ __all__ = [
     "method_template",
     "class_template",
     "module_template",
-    "dataclass_template",
 ]
 
 logging.basicConfig(
