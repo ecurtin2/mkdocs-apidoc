@@ -92,8 +92,9 @@ mkdocs==1.1.2 \
 mypy-extensions==0.4.3 \
     --hash=sha256:090fedd75945a69ae91ce1303b5824f428daf5a028d2f6ab8a299250a846f15d \
     --hash=sha256:2d82818f5bb3e369420cb3c4060a7970edba416647068eb4c5343488a6c604a8
-nltk==3.5; python_version > "2.7" \
-    --hash=sha256:845365449cd8c5f9731f7cb9f8bd6fd0767553b9d53af9eb1b3abf7700936b35
+nltk==3.6.6; python_version > "2.7" \
+    --hash=sha256:0f8ff4e261c78605bca284e8d2025e562304766156af32a1731f56b396ee364b \
+    --hash=sha256:69470ba480ff4408e8ea82c530c8dc9571bab899f49d4571e8c8833e0916abd0
 numpydoc==0.9.2 \
     --hash=sha256:9140669e6b915f42c6ce7fef704483ba9b0aaa9ac8e425ea89c76fe40478f642
 packaging==20.4 \
